@@ -1,0 +1,187 @@
+#
+# Copyright (c) 2017 Bitprim developers (see AUTHORS)
+#
+# This file is part of Bitprim.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+
+# ------------------------------------------------------------------------------------------------------
+
+
+build: false
+
+environment:
+    # VS150COMNTOOLS: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\"
+
+    matrix:
+ 
+      - PYTHON: "C:\\Python27-x64"
+        PYTHON_VERSION: "2.7.13"
+        PYTHON_ARCH: "64"
+        WINDOWS_SDK_VERSION: "v7.0"
+        DISTRIBUTIONS: "sdist bdist_wheel"
+        APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+
+      - PYTHON: "C:\\Python36-x64"
+        PYTHON_VERSION: "3.6.1"
+        PYTHON_ARCH: "64"
+        WINDOWS_SDK_VERSION: "v7.1"
+        DISTRIBUTIONS: "bdist_wheel"
+        APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+
+      - PYTHON: "C:\\Python33-x64"
+        PYTHON_VERSION: "3.3.5"
+        PYTHON_ARCH: "64"
+        WINDOWS_SDK_VERSION: "v7.1"
+        DISTRIBUTIONS: "bdist_wheel"
+        APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+  
+      - PYTHON: "C:\\Python34-x64"
+        PYTHON_VERSION: "3.4.4"
+        PYTHON_ARCH: "64"
+        WINDOWS_SDK_VERSION: "v7.1"
+        DISTRIBUTIONS: "bdist_wheel"
+        APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+
+      - PYTHON: "C:\\Python35-x64"
+        PYTHON_VERSION: "3.5.3"
+        PYTHON_ARCH: "64"
+        WINDOWS_SDK_VERSION: "v7.1"
+        DISTRIBUTIONS: "bdist_wheel"
+        APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+
+install:
+  - SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%
+  - SET VS90COMNTOOLS=%VS140COMNTOOLS%
+  - cd "c:\Users\appveyor\AppData\Local\Programs\Common\Microsoft\"
+  - ren "Visual C++ for Python" "Visual C++ for Python Do Not Use"
+  - cd "C:\Program Files (x86)\"
+  - ren "Microsoft Visual Studio 9.0" "Microsoft Visual Studio 9.0 Do Not Use"
+  # - cp "c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdint.h" "C:\Users\appveyor\AppData\Local\Programs\Common\Microsoft\Visual C++ for Python\9.0\VC\include\stdint.h"
+
+
+  # - set PATH=%PATH%;%PYTHON%/Scripts/
+  - "%PYTHON%\\Scripts\\pip.exe --version"
+  - "%PYTHON%\\Scripts\\pip.exe install --upgrade setuptools"
+  - "%PYTHON%\\python.exe -m pip install wheel"
+  - "%PYTHON%\\python.exe -m pip install twine"
+  - "%PYTHON%\\python.exe --version"
+  - "%PYTHON%\\python.exe -c \"import struct;print( 8 * struct.calcsize('P'))\""
+
+before_build:
+  # - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat" amd64
+  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+  # - IF "%PYTHON_ARCH%"=="64" (
+  #     call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+  #   ) ELSE (
+  #     call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+  #   )
+
+
+# test_script:
+build_script:
+    - cd %APPVEYOR_BUILD_FOLDER% 
+    # - pip install  -e .
+    - "%PYTHON%\\python.exe setup.py build"
+    - "%PYTHON%\\python.exe setup.py sdist"
+    - "%PYTHON%\\python.exe setup.py bdist_wheel"
+
+    - IF "%APPVEYOR_REPO_BRANCH%"=="master" (
+        twine upload -u %PYPI_USER_NAME% -p %PYPI_PASSWORD% dist/* || true
+      ) ELSE (
+        twine upload -u %PYPI_USER_NAME% -p %PYPI_PASSWORD% --repository-url https://test.pypi.org/legacy/ dist/*  || true
+      )
+
+
+
+
+# ------------------------------------------------------------------------------------------------------
+
+
+
+
+
+# # Taken from: https://packaging.python.org/en/latest/appveyor.html
+# # and from: https://bitbucket.org/pygame/pygame/pull-request/45/create-python-wheel-builds-using-appveyor/diff
+# # For now considering only Python 2.7, looking to support soon Python 2.6
+# # and Python 3 in the future
+ 
+# environment:
+ 
+#   global:
+#     # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
+#     # /E:ON and /V:ON options are not enabled in the batch script intepreter
+#     # See: http://stackoverflow.com/a/13751649/163740
+#     WITH_COMPILER: "cmd /E:ON /V:ON /C .\\appveyor\\run_with_compiler.cmd"
+ 
+#   matrix:
+#     - PYTHON: "C:\\Python27"
+#       PYTHON_VERSION: "2.7.8"
+#       PYTHON_ARCH: "32"
+#       DISTRIBUTIONS: "sdist bdist_wheel"
+ 
+#     - PYTHON: "C:\\Python33"
+#       PYTHON_VERSION: "3.3.5"
+#       PYTHON_ARCH: "32"
+#       DISTRIBUTIONS: "bdist_wheel"
+ 
+#     - PYTHON: "C:\\Python34"
+#       PYTHON_VERSION: "3.4.1"
+#       PYTHON_ARCH: "32"
+#       DISTRIBUTIONS: "bdist_wheel"
+ 
+#     - PYTHON: "C:\\Python27-x64"
+#       PYTHON_VERSION: "2.7.8"
+#       PYTHON_ARCH: "64"
+#       WINDOWS_SDK_VERSION: "v7.0"
+#       DISTRIBUTIONS: "sdist bdist_wheel"
+ 
+#     - PYTHON: "C:\\Python33-x64"
+#       PYTHON_VERSION: "3.3.5"
+#       PYTHON_ARCH: "64"
+#       WINDOWS_SDK_VERSION: "v7.1"
+#       DISTRIBUTIONS: "bdist_wheel"
+ 
+#     - PYTHON: "C:\\Python34-x64"
+#       PYTHON_VERSION: "3.4.1"
+#       PYTHON_ARCH: "64"
+#       WINDOWS_SDK_VERSION: "v7.1"
+#       DISTRIBUTIONS: "bdist_wheel"
+ 
+# init:
+#   - "ECHO %PYTHON% %PYTHON_VERSION% %PYTHON_ARCH%"
+#   - "ECHO %PYTHON% %WITH_COMPILER%"
+ 
+# install:
+#   # - "powershell appveyor\\install.ps1"
+#   - "set HOME=%APPVEYOR_BUILD_FOLDER%"
+#   - "%PYTHON%\\python.exe --version"
+#   - "%PYTHON%\\python.exe -c \"import struct;print( 8 * struct.calcsize('P'))\""
+ 
+# build: off
+ 
+# test_script:
+#   - python --version
+#   - python -c "import struct;print( 8 * struct.calcsize('P'))"
+#   # - "%PYTHON%/python --version"
+#   # - %PYTHON%/python -c "import struct;print( 8 * struct.calcsize('P'))"
+#   # - "%WITH_COMPILER% %PYTHON%/python setup.py test"
+ 
+# after_test:
+#   - "%WITH_COMPILER% %PYTHON%/python setup.py %DISTRIBUTIONS%"
+ 
+# artifacts:
+#   - path: dist\*

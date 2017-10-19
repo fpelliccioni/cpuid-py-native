@@ -1,0 +1,201 @@
+#
+# Copyright (c) 2017 Bitprim developers (see AUTHORS)
+#
+# This file is part of Bitprim.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+branches:
+  only:
+  - master
+  - dev
+
+linux: &linux
+   os: linux
+   sudo: required
+   language: python
+  #  python: "3.6"
+   services:
+     - docker
+
+osx: &osx
+   os: osx
+   sudo: required
+   # language: python
+   # python: "3.6"
+   language: generic
+
+
+
+#   2.7.12
+#   2.7.13
+#   3.4.0
+#   3.4-dev
+#   3.4.1
+#   3.4.2
+#   3.4.3
+#   3.4.4
+#   3.4.5
+#   3.4.6
+#   3.4.7
+#   3.5.0
+#   3.5-dev
+#   3.5.1
+#   3.5.2
+#   3.5.3
+#   3.5.4
+#   3.6.0
+#   3.6-dev
+#   3.6.1
+#   3.6.2
+#   3.7-dev
+
+
+matrix:
+   include:
+      - <<: *linux
+        env: C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+        compiler: gcc
+        python: "2.7"
+
+      - <<: *linux
+        env: C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+        compiler: gcc
+        python: "3.6"
+     
+      - <<: *osx
+        osx_image: xcode7.3
+        env: CONAN_APPLE_CLANG_VERSIONS=7.3  TRAVIS_PYTHON_VERSION=2.7 PYTHON_FULL_VERSION=2.7.13
+        python: "2.7"
+
+      - <<: *osx
+        osx_image: xcode8.3
+        env: CONAN_APPLE_CLANG_VERSIONS=8.1 TRAVIS_PYTHON_VERSION=2.7 PYTHON_FULL_VERSION=2.7.13
+        python: "2.7"
+
+      # - <<: *osx
+      #   osx_image: xcode7.3
+      #   env: CONAN_APPLE_CLANG_VERSIONS=7.3 TRAVIS_PYTHON_VERSION=3.4 PYTHON_FULL_VERSION=3.4.2
+      #   # PYTHON_FULL_VERSION=3.4.7
+      #   python: "3.4"
+
+      # - <<: *osx
+      #   osx_image: xcode8.3
+      #   env: CONAN_APPLE_CLANG_VERSIONS=8.1 TRAVIS_PYTHON_VERSION=3.4 PYTHON_FULL_VERSION=3.4.2
+      #   python: "3.4"
+
+      - <<: *osx
+        osx_image: xcode7.3
+        env: CONAN_APPLE_CLANG_VERSIONS=7.3 TRAVIS_PYTHON_VERSION=3.5 PYTHON_FULL_VERSION=3.5.2
+        # PYTHON_FULL_VERSION=3.5.4
+        python: "3.5"
+
+      - <<: *osx
+        osx_image: xcode8.3
+        env: CONAN_APPLE_CLANG_VERSIONS=8.1 TRAVIS_PYTHON_VERSION=3.5 PYTHON_FULL_VERSION=3.5.2
+        python: "3.5"
+
+      - <<: *osx
+        osx_image: xcode7.3
+        env: CONAN_APPLE_CLANG_VERSIONS=7.3 TRAVIS_PYTHON_VERSION=3.6 PYTHON_FULL_VERSION=3.6.2
+        python: "3.6"
+
+      - <<: *osx
+        osx_image: xcode8.3
+        env: CONAN_APPLE_CLANG_VERSIONS=8.1 TRAVIS_PYTHON_VERSION=3.6 PYTHON_FULL_VERSION=3.6.2
+        python: "3.6"
+
+install:
+
+  - set -e
+  # - set -x
+
+  - |
+    if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then
+      brew update || brew update
+      brew outdated pyenv || brew upgrade pyenv
+      brew install pyenv-virtualenv
+      brew install cmake || true
+
+      if which pyenv > /dev/null; then
+          eval "$(pyenv init -)"
+          eval "$(pyenv virtualenv-init -)" 
+      fi
+
+      pyenv install --list
+      pyenv install $PYTHON_FULL_VERSION
+      pyenv virtualenv $PYTHON_FULL_VERSION conan
+
+      pyenv rehash
+      pyenv activate conan
+    fi
+
+  # - pip install conan_package_tools --upgrade
+  # - pip install conan --upgrade
+  - pip install wheel --upgrade
+  - pip install twine --upgrade
+  # - conan user
+
+
+script:
+
+  - set -e
+  # - set -x
+
+  - |
+    if [[ "${TRAVIS_OS_NAME}" != "linux" ]]; then
+      if which pyenv > /dev/null; then
+          eval "$(pyenv init -)"
+          eval "$(pyenv virtualenv-init -)"
+      fi
+      pyenv activate conan
+    fi
+
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      cd ${TRAVIS_BUILD_DIR}
+      chmod a+x .travis/entrypoint.sh
+      /usr/bin/docker run --rm -ti -e TRAVIS_PYTHON_VERSION=$TRAVIS_PYTHON_VERSION -v ${TRAVIS_BUILD_DIR}:/home/conan/project -v ${TRAVIS_BUILD_DIR}/.travis/entrypoint.sh:/tmp/entrypoint.sh lasote/conangcc63 /bin/bash -c /tmp/entrypoint.sh
+    else
+      python --version
+      pip install  -e .
+      python setup.py sdist
+      python setup.py bdist_wheel
+    fi
+
+  # - python setup.py sdist
+
+  # TestPyPI ... https://packaging.python.org/guides/using-testpypi/
+  - |
+    if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
+      twine upload -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} dist/* || true
+    else
+      # For Testing Release
+      # twine upload -r test -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} dist/* || true
+      twine upload -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} --repository-url https://test.pypi.org/legacy/ dist/*  || true
+    fi    
+
+
+
+notifications:
+  email: 
+    - ci@bitprim.org
+    - dev@bitprim.org
+    - fernando@bitprim.org
+  slack: bitprim:CGkcy3Bjx7UUIxu9FSZTpaxE
+  webhooks:
+    urls: https://webhooks.gitter.im/e/a19dd2b03bf676d2b622
+    on_success: change
+    on_failure: always
