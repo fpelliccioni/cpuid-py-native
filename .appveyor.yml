@@ -63,6 +63,43 @@ environment:
         DISTRIBUTIONS: "bdist_wheel"
         APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
 
+
+
+      - PYTHON: "C:\\Python27"
+        PYTHON_VERSION: "2.7.13"
+        PYTHON_ARCH: "32"
+        WINDOWS_SDK_VERSION: "v7.0"
+        DISTRIBUTIONS: "sdist bdist_wheel"
+        APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+
+      - PYTHON: "C:\\Python36"
+        PYTHON_VERSION: "3.6.1"
+        PYTHON_ARCH: "32"
+        WINDOWS_SDK_VERSION: "v7.1"
+        DISTRIBUTIONS: "bdist_wheel"
+        APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+
+      - PYTHON: "C:\\Python33"
+        PYTHON_VERSION: "3.3.5"
+        PYTHON_ARCH: "32"
+        WINDOWS_SDK_VERSION: "v7.1"
+        DISTRIBUTIONS: "bdist_wheel"
+        APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+  
+      - PYTHON: "C:\\Python34"
+        PYTHON_VERSION: "3.4.4"
+        PYTHON_ARCH: "32"
+        WINDOWS_SDK_VERSION: "v7.1"
+        DISTRIBUTIONS: "bdist_wheel"
+        APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+
+      - PYTHON: "C:\\Python35"
+        PYTHON_VERSION: "3.5.3"
+        PYTHON_ARCH: "32"
+        WINDOWS_SDK_VERSION: "v7.1"
+        DISTRIBUTIONS: "bdist_wheel"
+        APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+
 install:
   - SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%
   - SET VS90COMNTOOLS=%VS140COMNTOOLS%
