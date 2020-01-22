@@ -36,6 +36,18 @@ PyObject* cpuid_native_get_cpuid_count(PyObject* self, PyObject* args) {
     return Py_BuildValue("iIIII", res, eax, ebx, ecx, edx);
 }
 
+PyObject* cpuid_native_xgetbv(PyObject* self, PyObject* args) {
+    int py_ctr;
+    unsigned int py_subleaf;
+    
+    if ( ! PyArg_ParseTuple(args, "I", &py_ctr)) {
+        return NULL;
+    }
+
+    uint64_t res = xgetbv(py_ctr);
+    return Py_BuildValue("K", res);
+}
+
 
 // ---------------------------------------------------------
 
@@ -44,6 +56,7 @@ static
 PyMethodDef CpuidNativeMethods[] = {
     {"get_cpuid",  cpuid_native_get_cpuid, METH_VARARGS, "..."},
     {"get_cpuid_count",  cpuid_native_get_cpuid_count, METH_VARARGS, "..."},
+    {"xgetbv",  cpuid_native_xgetbv, METH_VARARGS, "..."},
     
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };

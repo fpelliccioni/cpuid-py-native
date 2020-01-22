@@ -25,6 +25,8 @@
 #error this header is for x86 only
 #endif
 
+#include <stdint.h>
+
 #ifdef _WIN32
 #include <intrin.h>
 #endif // _WIN32
@@ -342,4 +344,32 @@ int __get_cpuid_count (unsigned int __leaf,
 
     cpuid_count(__leaf, __subleaf, __eax, __ebx, __ecx, __edx);
     return 1;
+}
+
+
+
+//Based on https://github.com/vectorclass/version2/blob/master/instrset_detect.cpp#L21
+static __inline 
+uint64_t xgetbv(int ctr) {	
+#if (defined (_MSC_FULL_VER) && _MSC_FULL_VER >= 160040000) || (defined (__INTEL_COMPILER) && __INTEL_COMPILER >= 1200)
+    // Microsoft or Intel compiler supporting _xgetbv intrinsic
+    return uint64_t(_xgetbv(ctr));                    // intrinsic function for XGETBV
+
+//TODO(fernando): apparently GCC8 supports the intrinsic.
+#elif defined(__GNUC__) ||  defined (__clang__)       // use inline assembly, Gnu/AT&T syntax
+   uint32_t a, d;
+   __asm("xgetbv" : "=a"(a),"=d"(d) : "c"(ctr) : );
+   return a | (uint64_t(d) << 32);
+#else  // #elif defined (_WIN32)                      // other compiler. try inline assembly with masm/intel/MS syntax
+   uint32_t a, d;
+    __asm {
+        mov ecx, ctr
+        _emit 0x0f
+        _emit 0x01
+        _emit 0xd0 ; // xgetbv
+        mov a, eax
+        mov d, edx
+    }
+   return a | (uint64_t(d) << 32);
+#endif
 }

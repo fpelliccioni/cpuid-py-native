@@ -9,7 +9,7 @@ from setuptools import setup
 from setuptools.extension import Extension
 
 PKG_NAME = 'cpuid_native'
-VERSION = '0.0.3'
+VERSION = '0.0.4'
 SYSTEM = sys.platform
 
 # ------------------------------------------------
