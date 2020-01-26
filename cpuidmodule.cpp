@@ -38,7 +38,6 @@ PyObject* cpuid_native_get_cpuid_count(PyObject* self, PyObject* args) {
 
 PyObject* cpuid_native_xgetbv(PyObject* self, PyObject* args) {
     int py_ctr;
-    unsigned int py_subleaf;
     
     if ( ! PyArg_ParseTuple(args, "I", &py_ctr)) {
         return NULL;
@@ -47,6 +46,15 @@ PyObject* cpuid_native_xgetbv(PyObject* self, PyObject* args) {
     uint64_t res = xgetbv(py_ctr);
     return Py_BuildValue("K", res);
 }
+
+PyObject* cpuid_native_rdtscp(PyObject* self, PyObject* args) {
+    unsigned int ui;
+    uint64_t res = rdtscp(&ui);
+
+    return Py_BuildValue("(KI)", res, ui);
+}
+
+
 
 
 // ---------------------------------------------------------
@@ -57,6 +65,7 @@ PyMethodDef CpuidNativeMethods[] = {
     {"get_cpuid",  cpuid_native_get_cpuid, METH_VARARGS, "..."},
     {"get_cpuid_count",  cpuid_native_get_cpuid_count, METH_VARARGS, "..."},
     {"xgetbv",  cpuid_native_xgetbv, METH_VARARGS, "..."},
+    {"rdtscp",  cpuid_native_rdtscp, METH_VARARGS, "..."},
     
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };

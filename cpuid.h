@@ -373,3 +373,9 @@ uint64_t xgetbv(int ctr) {
    return a | (uint64_t(d) << 32);
 #endif
 }
+
+// https://docs.microsoft.com/en-us/cpp/intrinsics/rdtscp?view=vs-2019
+static __inline 
+uint64_t rdtscp(unsigned int* aux) {	
+    return __rdtscp(aux);
+}
