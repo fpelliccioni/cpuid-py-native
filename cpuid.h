@@ -375,7 +375,14 @@ uint64_t xgetbv(int ctr) {
 }
 
 // https://docs.microsoft.com/en-us/cpp/intrinsics/rdtscp?view=vs-2019
+// https://stackoverflow.com/questions/14783782/which-inline-assembly-code-is-correct-for-rdtscp/14783846#14783846
 static __inline 
-uint64_t rdtscp(unsigned int* aux) {	
+uint64_t rdtscp(unsigned int* aux) {
+#if (defined (_MSC_FULL_VER) && _MSC_FULL_VER >= 160040000) || (defined (__INTEL_COMPILER) && __INTEL_COMPILER >= 1200)
     return __rdtscp(aux);
+#elif defined(__GNUC__) ||  defined (__clang__)       // use inline assembly, Gnu/AT&T syntax
+    uint64_t rax,rdx;
+    asm volatile ( "rdtscp\n" : "=a" (rax), "=d" (rdx), "=c" (aux) : : );
+    return (rdx << 32) + rax;
+#endif
 }
