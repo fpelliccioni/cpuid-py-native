@@ -65,6 +65,29 @@ osx: &osx
 
 matrix:
    include:
+      - <<: *osx
+        osx_image: xcode12
+        env: CONAN_APPLE_CLANG_VERSIONS=12.0 TRAVIS_PYTHON_VERSION=3.6 PYTHON_FULL_VERSION=3.6.2
+        python: "3.6"
+
+      # - <<: *osx
+      #   osx_image: xcode11.4
+      #   env: CONAN_APPLE_CLANG_VERSIONS=11.0 TRAVIS_PYTHON_VERSION=3.6 PYTHON_FULL_VERSION=3.6.2
+      #   python: "3.6"
+
+      # - <<: *osx
+      #   osx_image: xcode10.1
+      #   env: CONAN_APPLE_CLANG_VERSIONS=10.0 TRAVIS_PYTHON_VERSION=3.6 PYTHON_FULL_VERSION=3.6.2
+      #   python: "3.6"
+
+      # - <<: *osx
+      #   osx_image: xcode9
+      #   env: CONAN_APPLE_CLANG_VERSIONS=9.0 TRAVIS_PYTHON_VERSION=3.6 PYTHON_FULL_VERSION=3.6.2
+      #   python: "3.6"
+
+# ---------------------------------------------------------------------------
+
+
       - <<: *linux
         env: C_COMPILER=gcc-6 CXX_COMPILER=g++-6
         compiler: gcc
