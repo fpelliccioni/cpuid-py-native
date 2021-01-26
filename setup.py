@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # 
-# Copyright (c) 2017 Fernando Pelliccioni
+# Copyright (c) 2017-2021 Fernando Pelliccioni
 # 
 
 import sys
@@ -9,7 +9,7 @@ from setuptools import setup
 from setuptools.extension import Extension
 
 PKG_NAME = 'cpuid_native'
-VERSION = '0.0.6'
+VERSION = '0.0.7'
 SYSTEM = sys.platform
 
 # ------------------------------------------------
@@ -25,16 +25,9 @@ from sys import platform
 
 extensions = [
 	Extension('cpuid_native',
-
-        # define_macros = [('BITPRIM_LIB_STATIC', None),],
     	sources = ['cpuidmodule.cpp'],
-
-        # include_dirs=['bitprim/include'],
-        # library_dirs=['bitprim/lib'],
-        # libraries = get_libraries()
     ),
 ]
-
 
 setup(
     name=PKG_NAME,
@@ -73,6 +66,8 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
 
     # What does your project relate to?
