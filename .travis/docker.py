@@ -24,9 +24,6 @@ class Docker(object):
     #     temp.write("#!/bin/bash\n")
     #     temp.write("sudo pip install --upgrade conan_package_tools\n")
     #     temp.write("conan user\n")
-
-    #     # temp.write("conan remote add bintray https://api.bintray.com/conan/uilianries/conan\n")
-    #     temp.write("conan remote add bitprim_temp https://api.bintray.com/conan/bitprim/bitprim\n")
         
     #     temp.write("conan install .\n")
     #     temp.write("pip install  -e .\n")
