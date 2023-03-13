@@ -107,7 +107,7 @@ jobs:
       #     cp  kytea\lib\libkytea.lib lib\kytea\
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.3.1
+        uses: pypa/cibuildwheel@v2.12.1
         env:
           CIBW_BUILD: cp${{ matrix.python }}-${{ matrix.platform_id }}
           CIBW_ARCHS: all
@@ -170,7 +170,7 @@ jobs:
           name: artifact
           path: dist
 
-      - uses: pypa/gh-action-pypi-publish@v1.4.2
+      - uses: pypa/gh-action-pypi-publish@v1.7.1
         with:
           user: __token__
           password: ${{ secrets.pypi_password }}
