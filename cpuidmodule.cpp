@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2021 Fernando Pelliccioni
+ * Copyright (c) 2017-2023 Fernando Pelliccioni
  */
 
 #include <Python.h>
@@ -8,7 +8,7 @@
 // ---------------------------------------------------------
 
 #ifdef __cplusplus
-extern "C" {  
+extern "C" {
 #endif
 
 PyObject* cpuid_native_get_cpuid(PyObject* self, PyObject* args) {
@@ -26,7 +26,7 @@ PyObject* cpuid_native_get_cpuid(PyObject* self, PyObject* args) {
 PyObject* cpuid_native_get_cpuid_count(PyObject* self, PyObject* args) {
     unsigned int py_leaf;
     unsigned int py_subleaf;
-    
+
     if ( ! PyArg_ParseTuple(args, "II", &py_leaf, &py_subleaf))
         return NULL;
 
@@ -38,7 +38,7 @@ PyObject* cpuid_native_get_cpuid_count(PyObject* self, PyObject* args) {
 
 PyObject* cpuid_native_xgetbv(PyObject* self, PyObject* args) {
     int py_ctr;
-    
+
     if ( ! PyArg_ParseTuple(args, "I", &py_ctr)) {
         return NULL;
     }
@@ -66,7 +66,7 @@ PyMethodDef CpuidNativeMethods[] = {
     {"get_cpuid_count",  cpuid_native_get_cpuid_count, METH_VARARGS, "..."},
     {"xgetbv",  cpuid_native_xgetbv, METH_VARARGS, "..."},
     {"rdtscp",  cpuid_native_rdtscp, METH_VARARGS, "..."},
-    
+
     {NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
@@ -83,19 +83,19 @@ static struct module_state _state;
 
 #if PY_MAJOR_VERSION >= 3
 
-static 
+static
 int myextension_traverse(PyObject *m, visitproc visit, void *arg) {
     Py_VISIT(GETSTATE(m)->error);
     return 0;
 }
 
-static 
+static
 int myextension_clear(PyObject *m) {
     Py_CLEAR(GETSTATE(m)->error);
     return 0;
 }
 
-static 
+static
 struct PyModuleDef moduledef = {
         PyModuleDef_HEAD_INIT,
         "cpuid_native",
@@ -145,7 +145,7 @@ initcpuid_native(void)
     struct module_state *st = GETSTATE(module);
 
     st->error = PyErr_NewException((char*)"myextension.Error", NULL, NULL);
-    
+
     if (st->error == NULL) {
         Py_DECREF(module);
         INITERROR;
@@ -159,5 +159,5 @@ initcpuid_native(void)
 
 #ifdef __cplusplus
 } // extern "C"
-#endif  
+#endif
 

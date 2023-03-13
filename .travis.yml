@@ -1,6 +1,6 @@
-# 
-# Copyright (c) 2017-2021 Fernando Pelliccioni
-# 
+#
+# Copyright (c) 2017-2023 Fernando Pelliccioni
+#
 
 branches:
   only:
@@ -57,7 +57,7 @@ matrix:
         env: C_COMPILER=gcc-6 CXX_COMPILER=g++-6
         compiler: gcc
         python: "3.6"
-     
+
       - <<: *osx
         osx_image: xcode7.3
         env: CONAN_APPLE_CLANG_VERSIONS=7.3  TRAVIS_PYTHON_VERSION=2.7 PYTHON_FULL_VERSION=2.7.13
@@ -114,7 +114,7 @@ install:
 
       if which pyenv > /dev/null; then
           eval "$(pyenv init -)"
-          eval "$(pyenv virtualenv-init -)" 
+          eval "$(pyenv virtualenv-init -)"
       fi
 
       pyenv install --list
@@ -168,12 +168,12 @@ script:
       # For Testing Release
       # twine upload -r test -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} dist/* || true
       twine upload -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} --repository-url https://test.pypi.org/legacy/ dist/*  || true
-    fi    
+    fi
 
 
 
 notifications:
-  email: 
+  email:
     - fpelliccioni@gmail.com
   # slack: bitprim:CGkcy3Bjx7UUIxu9FSZTpaxE
   # webhooks:
