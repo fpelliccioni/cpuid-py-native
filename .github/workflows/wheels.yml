@@ -15,27 +15,27 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Windows
-          - os: windows-2016
-            python: 37
-            bitness: 64
-            platform_id: win_amd64
-          - os: windows-2016
-            python: 38
-            bitness: 64
-            platform_id: win_amd64
-          - os: windows-2016
-            python: 39
-            bitness: 64
-            platform_id: win_amd64
-          - os: windows-2016
-            python: 310
-            bitness: 64
-            platform_id: win_amd64
-          - os: windows-2016
-            python: 311
-            bitness: 64
-            platform_id: win_amd64
+          # # Windows
+          # - os: windows-2016
+          #   python: 37
+          #   bitness: 64
+          #   platform_id: win_amd64
+          # - os: windows-2016
+          #   python: 38
+          #   bitness: 64
+          #   platform_id: win_amd64
+          # - os: windows-2016
+          #   python: 39
+          #   bitness: 64
+          #   platform_id: win_amd64
+          # - os: windows-2016
+          #   python: 310
+          #   bitness: 64
+          #   platform_id: win_amd64
+          # - os: windows-2016
+          #   python: 311
+          #   bitness: 64
+          #   platform_id: win_amd64
 
           # Linux
           - os: ubuntu-latest
@@ -134,7 +134,7 @@ jobs:
           #   rm -r kytea-0.4.7 &&
           #   swig -Wall -c++ -python -shadow -I/usr/local/include lib/kytea/mykytea.i
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           path: ./wheelhouse/*.whl
 
@@ -156,7 +156,7 @@ jobs:
       - name: Build sdist
         run: pip install setuptools_scm && python setup.py sdist
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           path: dist/*.tar.gz
 
@@ -165,7 +165,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'release' && github.event.action == 'published'
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: artifact
           path: dist
