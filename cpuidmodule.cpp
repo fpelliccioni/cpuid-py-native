@@ -124,11 +124,15 @@ initcpuid_native(void)
 #endif /* PY_MAJOR_VERSION >= 3 */
 
 {
+    // Not necessary after Python 3.7
+    // See: https://docs.python.org/3.12/c-api/init.html#c.PyEval_ThreadsInitialized
+#if (PY_MAJOR_VERSION < 3) || ((PY_MAJOR_VERSION == 3) && (PY_MINOR_VERSION < 7))
     // Make sure the GIL has been created since we need to acquire it in our
     // callback to safely call into the python application.
     if (! PyEval_ThreadsInitialized()) {
         PyEval_InitThreads();
     }
+#endif
 
 
 #if PY_MAJOR_VERSION >= 3
