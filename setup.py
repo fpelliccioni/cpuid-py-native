@@ -9,7 +9,7 @@ from setuptools import setup
 from setuptools.extension import Extension
 
 PKG_NAME = 'cpuid_native'
-VERSION = '0.1.0'
+VERSION = '0.1.1'
 SYSTEM = sys.platform
 
 # ------------------------------------------------
@@ -29,12 +29,17 @@ extensions = [
     ),
 ]
 
+# Read README for long description
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
+
 setup(
     name=PKG_NAME,
     version=VERSION,
 
     description='x86 cpuid native API',
-    long_description='x86 cpuid native API',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     url='https://github.com/fpelliccioni/cpuid-py-native',
 
     # Author details
