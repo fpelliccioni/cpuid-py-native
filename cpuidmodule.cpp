@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017-2023 Fernando Pelliccioni
+ * Copyright (c) 2017-2025 Fernando Pelliccioni
  */
 
 #include <Python.h>

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #
-# Copyright (c) 2017-2023 Fernando Pelliccioni
+# Copyright (c) 2017-2025 Fernando Pelliccioni
 #
 
 import sys
@@ -9,7 +9,7 @@ from setuptools import setup
 from setuptools.extension import Extension
 
 PKG_NAME = 'cpuid_native'
-VERSION = '0.0.8'
+VERSION = '0.0.9'
 SYSTEM = sys.platform
 
 # ------------------------------------------------
@@ -71,6 +71,8 @@ setup(
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
     ],
 
     # What does your project relate to?
