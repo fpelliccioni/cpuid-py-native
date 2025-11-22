@@ -8,6 +8,8 @@
 
 A lightweight C/C++ extension that provides direct, low-level access to x86/x64 processor identification and feature detection through the CPUID instruction.
 
+> **⚠️ x86/x64 ONLY**: This library uses the CPUID instruction which is **exclusive to x86/x64 processors**. It will **NOT work on ARM** processors (Apple Silicon M1/M2/M3, Raspberry Pi, AWS Graviton, etc.). Attempting to build or run on ARM will result in compilation errors. This is by design - CPUID is an x86-specific instruction with no ARM equivalent.
+
 ## Features
 
 - **Zero-dependency native extension** - Direct CPU instruction access with minimal overhead
