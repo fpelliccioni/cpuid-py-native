@@ -63,6 +63,16 @@ jobs:
             bitness: 64
             platform_id: manylinux_x86_64
             manylinux_image: manylinux2014
+          - os: ubuntu-latest
+            python: 312
+            bitness: 64
+            platform_id: manylinux_x86_64
+            manylinux_image: manylinux2014
+          - os: ubuntu-latest
+            python: 313
+            bitness: 64
+            platform_id: manylinux_x86_64
+            manylinux_image: manylinux2014
 
           # MacOS x86_64
           - os: macos-latest
@@ -85,18 +95,26 @@ jobs:
             bitness: 64
             python: 311
             platform_id: macosx_x86_64
+          - os: macos-latest
+            bitness: 64
+            python: 312
+            platform_id: macosx_x86_64
+          - os: macos-latest
+            bitness: 64
+            python: 313
+            platform_id: macosx_x86_64
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       # - name: Get history and tags for SCM versioning to work
       #   run: |
       #     git fetch --prune --unshallow
       #     git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         name: Install Python
         with:
-          python-version: '3.9'
+          python-version: '3.12'
 
       # - name: Prepare for Windows
       #   if: runner.os == 'Windows'
@@ -107,7 +125,7 @@ jobs:
       #     cp  kytea\lib\libkytea.lib lib\kytea\
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.12.1
+        uses: pypa/cibuildwheel@v2.22.0
         env:
           CIBW_BUILD: cp${{ matrix.python }}-${{ matrix.platform_id }}
           CIBW_ARCHS: all
@@ -134,43 +152,47 @@ jobs:
           #   rm -r kytea-0.4.7 &&
           #   swig -Wall -c++ -python -shadow -I/usr/local/include lib/kytea/mykytea.i
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
+          name: wheels-cp${{ matrix.python }}-${{ matrix.platform_id }}
           path: ./wheelhouse/*.whl
 
   build_sdist:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       # - name: Get history and tags for SCM versioning to work
       #   run: |
       #     git fetch --prune --unshallow
       #     git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         name: Install Python
         with:
-          python-version: '3.9'
+          python-version: '3.12'
 
       - name: Build sdist
         run: pip install setuptools_scm && python setup.py sdist
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
+          name: sdist
           path: dist/*.tar.gz
 
   upload_pypi:
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
-    # if: github.event_name == 'release' && github.event.action == 'published'
+    if: github.ref == 'refs/heads/master'
     steps:
-      - uses: actions/download-artifact@v4.1.7
+      - uses: actions/download-artifact@v4
         with:
-          name: artifact
+          pattern: '*'
           path: dist
+          merge-multiple: true
 
-      - uses: pypa/gh-action-pypi-publish@v1.13.0
+      - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           # user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
+          skip-existing: true
